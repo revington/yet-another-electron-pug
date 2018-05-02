@@ -67,12 +67,12 @@ function handleNonPugContent(file, ext, callback) {
     });
 }
 
-function createHandler(pugOptions, localsHook) {
+function createHandler(pugOptions, beforePugFileLoad) {
     return function handler(request, callback) {
         let file = getPath(request.url);
         const ext = path.extname(file).toLowerCase();
         if (ext === '.pug') {
-            localsHook(file, function (locals) {
+            beforePugFileLoad(file, function (locals) {
                 handlePugContent(file, pugOptions, locals, callback);
             });
             return;

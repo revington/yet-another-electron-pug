@@ -115,3 +115,34 @@ describe('#handlePugContent(file, pugOptions, locals, callback)', function () {
         });
     });
 });
+describe('#createHandler(pugOptions, beforePugFileLoad)', function () {
+    describe('new handler', function () {
+        var file;
+        var result;
+        before(function (done) {
+            function beforePugFileLoad(_file, cb) {
+                file = _file;
+                cb({
+                    greeting: 'helloooo'
+                });
+            }
+            let handler = createHandler({}, beforePugFileLoad);
+            let url =
+                'file://' + __dirname + '/fixtures/hello.pug';
+            handler({
+                    url
+                },
+                function (res) {
+                    result = res;
+                    return done();
+                });
+        });
+        it('should call beforePugFileLoad before loading every pug file', function () {
+            assert(file.indexOf('hello.pug') > -1);
+        });
+        it('locals should be passed to pugCompiler along the file', function () {
+            const contents = result.data.toString();
+            assert(contents.indexOf('helloooo') > -1);
+        });
+    });
+});
